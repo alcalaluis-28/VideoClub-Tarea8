@@ -12,7 +12,7 @@ exports.crearPelicula = async (req, res) => {
   const sql = "INSERT INTO peliculas (titulo, director, anio, stock) VALUES (?,?,?,?)"
 
   try {
-    const [result] = await db.query(sql, [titulo, director, anio, stock])
+    const [result] = await pool.query(sql, [titulo, director, anio, stock])
     res.status(201).json({
       id: result.insertId,
       mensaje: 'Pelicula registrada correctamente'
@@ -27,7 +27,7 @@ exports.crearPelicula = async (req, res) => {
 exports.obtenerPeliculas = async (req, res) => {
   const sql = "SELECT id, titulo, director, anio, stock FROM peliculas"
   try {
-    const [peliculas] = await db.query(sql)
+    const [peliculas] = await pool.query(sql)
     res.status(200).json(peliculas)
   } catch (e) {
     console.error(e)
@@ -41,7 +41,7 @@ exports.obtenerPeliculaPorId = async (req, res) => {
   const sql = "SELECT id, titulo, director, anio, stock FROM peliculas WHERE id = ?"
 
   try {
-    const [peliculas] = await db.query(sql, [id])
+    const [peliculas] = await pool.query(sql, [id])
 
     if (peliculas.length === 0) {
       return res.status(404).json({ mensaje: 'No encontramos la película con ese ID' })
@@ -87,7 +87,7 @@ exports.actualizarPelicula = async (req, res) => {
   values.push(id)
 
   try {
-    const [result] = await db.query(sql, values)
+    const [result] = await pool.query(sql, values)
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ mensaje: 'No encontramos la película con el ID' })
@@ -106,7 +106,7 @@ exports.eliminarPelicula = async (req, res) => {
   const sql = "DELETE FROM peliculas WHERE id = ?"
 
   try {
-    const [result] = await db.query(sql, [id])
+    const [result] = await pool.query(sql, [id])
 
     if (result.affectedRows === 0) {
       return res.status(400).json({ mensaje: 'No encontramos la película a eliminar' })
